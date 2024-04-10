@@ -1,10 +1,21 @@
-import SearchInput from './components/SearchInput';
+'use client';
+
+import SearchHeader from './components/SearchHeader';
+import { styled } from 'styled-components';
+
+const Container = styled.main`
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+`;
 
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-24">
-      <SearchInput />
-    </main>
+    <Container>
+      <SearchHeader />
+    </Container>
   );
 }

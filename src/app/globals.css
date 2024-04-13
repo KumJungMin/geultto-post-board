@@ -19,7 +19,7 @@
 body {
   background-color: #DFDFE0;
   padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
 
 @layer utilities {

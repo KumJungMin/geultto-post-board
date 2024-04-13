@@ -4,11 +4,11 @@ interface PostParams {
   filter?: string;
   isDescending?: boolean;
   limit?: number;
-  pageParam?: number;
+  offset?: number;
 }
 
 async function fetchPosts ({ 
-  pageParam = 0, 
+  offset = 0, 
   keyword = '', 
   filter = 'dt', 
   isDescending = true, 
@@ -16,7 +16,7 @@ async function fetchPosts ({
 }: PostParams
 ) {
   const baseUrl = 'https://ttobot.kro.kr/v1/contents';
-  const response = await fetch(`${baseUrl}?keyword=${keyword}&offset=${pageParam}&limit=${limit}&order_by=${filter}&descending=${isDescending}`);
+  const response = await fetch(`${baseUrl}?keyword=${keyword}&offset=${offset}&limit=${limit}&order_by=${filter}&descending=${isDescending}`);
   return response.json();
 };
 

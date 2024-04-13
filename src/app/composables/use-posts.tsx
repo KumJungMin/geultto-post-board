@@ -46,7 +46,6 @@ export function usePosts() {
       });
       const newPosts = [...posts, ...data.data];
       setPosts(newPosts);
-      console.log(newPosts);
       setTotalCount(data.count);
     } finally {
       setIsMoreLoading(false);

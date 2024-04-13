@@ -2,7 +2,7 @@ interface ArrowUpProps {
   width?: string;
   height?: string;
   color?: string;
-  style: React.CSSProperties;
+  style?: React.CSSProperties;
 }
 
 export default function ArrowUpIcon(

@@ -17,6 +17,7 @@ const Label = styled.span<{$bgColor: string}>`
   border-radius: 16px;
   font-size: 12px;
   color: #fff;
+  word-break: break-all;
 `;
 
 function isKorean(text: string) {

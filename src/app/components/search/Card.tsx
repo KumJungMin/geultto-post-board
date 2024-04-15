@@ -17,6 +17,7 @@ interface CardProps {
 
 const Container = styled.div`
   background-color: #fff;
+  height: 100%;
   min-height: 200px;
   padding: 28px 34px;
   border-radius: 38px;

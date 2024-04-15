@@ -100,6 +100,7 @@ export default function Search() {
         endMessage={ <EndMessage>더 이상의 컨텐츠가 없습니다</EndMessage> }
         onScroll={onScroll}
         refreshFunction={fetchPosts}
+        style={{ overflow: 'hidden' }}
         pullDownToRefresh
         pullDownToRefreshThreshold={50}
         releaseToRefreshContent={ <FullToRefresh /> }

@@ -46,6 +46,8 @@ const EndMessage = styled.p`
 
 
 export default function Search() {
+  // TODO: 컨텐츠가 높이보다 짧을 때 컨텐츠 추가 렌더링하기
+  
   const { replace } = useRouter();
   const searchParams = useSearchParams();
 

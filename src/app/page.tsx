@@ -29,8 +29,6 @@ export default function Home() {
       window.removeEventListener('mousemove', movingAnimation);
     }
   });
-
-  // transform: translate(calc(var(--x)/45), calc(var(--y)/45));
   
   function movingAnimation(e: MouseEvent) {
     const html = document.documentElement;

@@ -44,9 +44,9 @@ const LoadingCircle = styled.span`
 `;
 
 
-export default function Loading({ fullWindow = false }) {
+export default function Loading({ fullWindow = false, style = {} }) {
   return (
-    <Container $fullWindow={ fullWindow }>
+    <Container $fullWindow={ fullWindow } style={style} >
       <LoadingCircle />
       <LoadingCircle />
       <LoadingCircle />

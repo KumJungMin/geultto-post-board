@@ -11,6 +11,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   margin: 0 auto;
+  padding-top: 84px;
 `;
 
 const Absolute = styled.div`
@@ -20,14 +21,15 @@ const Absolute = styled.div`
 
 const SelectBoxWrapper = styled.div`
   position: absolute;
-  right: -88px;
+  left: 50%;
   bottom: 0;
   display: flex;
   gap: 8px;
-
+  transform: translateX(180px);
+  bottom: 0;
   @media (max-width: 534px) {
-    top: 60px;
-    right: 0;
+    bottom: -38px;
+    transform: translateX(74px);
   }
 `;
 

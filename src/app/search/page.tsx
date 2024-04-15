@@ -20,18 +20,20 @@ import NoResult from '../components/search/NoResult';
 const Container = styled.main`
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
   align-items: center;
-  padding: 200px 24px 24px;
+  padding-top: 100px;
   @media (max-width: 534px) {
-    padding-top: 120px;
+    padding-top: 80px;
   }
 `;
 
 const Grid = styled.div`
   width: 100%;
   max-width: 1200px;
-  margin-top: 46px;
+  margin: 46px auto 0;
+  padding: 0 24px 24px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
@@ -92,20 +94,19 @@ export default function Search() {
 
   return (
     <>
-      <InfiniteScroll
-        dataLength={posts.length || 0}
-        next={ () => getMorePosts({ keyword: currKeyword, filter: currFilter }) }
-        hasMore={ posts.length < totalCount }
-        loader={<Loading />}
-        endMessage={ <EndMessage>더 이상의 컨텐츠가 없습니다</EndMessage> }
-        onScroll={onScroll}
-        refreshFunction={fetchPosts}
-        style={{ overflow: 'hidden' }}
-        pullDownToRefresh
-        pullDownToRefreshThreshold={50}
-        releaseToRefreshContent={ <FullToRefresh /> }
-      >
         <Container>
+          <InfiniteScroll
+            dataLength={posts.length || 0}
+            next={ () => getMorePosts({ keyword: currKeyword, filter: currFilter }) }
+            hasMore={ posts.length < totalCount }
+            loader={<Loading style={{ marginTop: '20px' }} />}
+            endMessage={ posts.length ? <EndMessage>더 이상의 컨텐츠가 없습니다</EndMessage> : ''}
+            onScroll={onScroll}
+            refreshFunction={fetchPosts}
+            pullDownToRefresh
+            pullDownToRefreshThreshold={50}
+            releaseToRefreshContent={ <FullToRefresh /> }
+          >
           <SearchHeader currKeyword={currKeyword} currFilter={currFilter} handleSubmit={onSubmit}/>
             {
               isLoading ? <Loading fullWindow /> :
@@ -113,8 +114,8 @@ export default function Search() {
                   <NoResult /> :
                   <Grid> {posts.map((post, index) => <Card key={index} data={post} />)} </Grid>
               }
+          </InfiniteScroll>
         </Container>
-      </InfiniteScroll>
       { scrollTopVisible && <ScrollToTop onClick={ toScrollTop } /> }
     </>
   );

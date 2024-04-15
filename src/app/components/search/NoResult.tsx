@@ -4,7 +4,8 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px;
+  color: #9FA0A1;
+  padding-top: 140px;
 `;
 
 const Font = styled.p<{fontSize: number}>`

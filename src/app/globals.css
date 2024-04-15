@@ -17,9 +17,14 @@
 }
 
 body {
+  height: 100vh;
   background-color: #DFDFE0;
   padding-top: env(safe-area-inset-top);
   padding-bottom: calc(16px + env(safe-area-inset-bottom));
+
+  .infinite-scroll-component__outerdiv {
+    width: 100%;
+  }
 }
 
 @layer utilities {

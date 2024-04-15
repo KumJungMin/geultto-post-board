@@ -15,6 +15,7 @@ export function usePosts() {
   }) {
     try {
       setIsLoading(true);
+      setPosts([]);
       const data = await postApi.fetchPosts({ 
         offset: 0, 
         keyword, 

@@ -9,6 +9,16 @@ const Container = styled.main`
   height: 100vh;
   font-size: 2rem;
   flex-direction: column;
+  &::before {
+    content: '';
+    display: block;
+    width: 400px;
+    height: 400px;
+    background-image: url('/not-found.png');
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 20px;
+  }
 `;
 
 const Button = styled.button`
@@ -36,7 +46,6 @@ export default function NotFound() {
   }
 
 	return <Container>
-    <h1> 404, 없는 페이지입니다 ;( </h1>
     <Button onClick={ goHome }>홈으로 가기</Button>
   </Container>
 }

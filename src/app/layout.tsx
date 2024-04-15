@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import StyledComponentsRegistry from './lib/registry'
+import { Suspense } from 'react';
+
 import "./globals.css";
 import { Noto_Sans_KR, Noto_Sans } from 'next/font/google';
 
@@ -26,7 +28,9 @@ export default function RootLayout({
   return (
     <html lang="kr">
       <body className={`${notoKR} ${notoSans}`}>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        <Suspense>
+          <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        </Suspense>
       </body>
     </html>
   );

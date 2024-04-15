@@ -1,18 +1,12 @@
 import { styled } from 'styled-components';
 import Link from 'next/link';
 import dayjs from 'dayjs';
+import type { Post } from '../../types'
 
 import LabelGroup from './LabelGroup';
 
 interface CardProps {
-  data: {
-    title: string;
-    name: string;
-    cohort: string;
-    tags: string;
-    dt: string;
-    content_url: string;
-  }
+  data: Post;
 }
 
 const Container = styled.div`

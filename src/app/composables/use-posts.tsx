@@ -1,8 +1,9 @@
 import { useState } from "react";
 import postApi from '../_api/post';
+import type { Post } from '../types';
 
 export function usePosts() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isMoreLoading, setIsMoreLoading] = useState(false);
@@ -45,7 +46,7 @@ export function usePosts() {
         isDescending,
         limit
       });
-      const newPosts = [...posts, ...data.data];
+      const newPosts:Post[] = [...posts, ...data.data];
       setPosts(newPosts);
       setTotalCount(data.count);
     } finally {

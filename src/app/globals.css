@@ -17,14 +17,22 @@
 }
 
 body {
-  height: 100vh;
+  position: fixed;
+  overflow: hidden;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background-color: #DFDFE0;
   padding-top: env(safe-area-inset-top);
-  padding-bottom: calc(16px + env(safe-area-inset-bottom));
 
   .infinite-scroll-component__outerdiv {
     width: 100%;
   }
+}
+
+main {
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
 
 @layer utilities {

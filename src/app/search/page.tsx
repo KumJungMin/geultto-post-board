@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { styled } from 'styled-components';
 import { useSearchParams } from 'next/navigation';
@@ -24,6 +24,7 @@ const Container = styled.main`
   height: 100%;
   align-items: center;
   padding-top: 100px;
+  overflow-y: auto;
   @media (max-width: 534px) {
     padding-top: 80px;
   }
@@ -48,6 +49,7 @@ const EndMessage = styled.p`
 export default function Search() {
   // TODO: 컨텐츠가 높이보다 짧을 때 컨텐츠 추가 렌더링하기
 
+  const scrollEl = useRef<HTMLDivElement>(null);
   const { replace } = useRouter();
   const searchParams = useSearchParams();
 
@@ -87,26 +89,35 @@ export default function Search() {
   }
 
   function toScrollTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollEl!.current!.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function onScroll() {
-    setScrollTopVisible(window.scrollY > 300);
+  function onScroll(e: React.UIEvent<HTMLDivElement>){
+    setScrollTopVisible(e.currentTarget.scrollTop > 100);
+  }
+
+  let timer: NodeJS.Timeout | null = null;
+
+  function onNext() {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      getMorePosts({ keyword: currKeyword, filter: currFilter });
+    }, 100);
   }
 
   return (
     <>
-        <Container>
+        <Container ref={scrollEl} id="scrollableDiv" onScroll={onScroll}>
           <InfiniteScroll
             dataLength={posts.length || 0}
-            next={ () => getMorePosts({ keyword: currKeyword, filter: currFilter }) }
+            next={ onNext }
             hasMore={ posts.length < totalCount }
             loader={<Loading style={{ marginTop: '20px' }} />}
             endMessage={ posts.length ? <EndMessage>더 이상의 컨텐츠가 없습니다</EndMessage> : ''}
-            onScroll={onScroll}
             refreshFunction={fetchPosts}
             pullDownToRefresh
             pullDownToRefreshThreshold={50}
+            scrollableTarget="scrollableDiv"
             releaseToRefreshContent={ <FullToRefresh /> }
           >
           <SearchHeader 

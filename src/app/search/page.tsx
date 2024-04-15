@@ -47,7 +47,7 @@ const EndMessage = styled.p`
 
 export default function Search() {
   // TODO: 컨텐츠가 높이보다 짧을 때 컨텐츠 추가 렌더링하기
-  
+
   const { replace } = useRouter();
   const searchParams = useSearchParams();
 
@@ -109,7 +109,12 @@ export default function Search() {
             pullDownToRefreshThreshold={50}
             releaseToRefreshContent={ <FullToRefresh /> }
           >
-          <SearchHeader currKeyword={currKeyword} currFilter={currFilter} handleSubmit={onSubmit}/>
+          <SearchHeader 
+            currKeyword={currKeyword} 
+            currFilter={currFilter} 
+            style={{ paddingTop: '84px'}} 
+            handleSubmit={onSubmit}
+          />
             {
               isLoading ? <Loading fullWindow /> :
                 !posts.length ? 

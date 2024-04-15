@@ -11,7 +11,6 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   margin: 0 auto;
-  padding-top: 84px;
 `;
 
 const Absolute = styled.div`
@@ -53,9 +52,10 @@ interface SearchHeaderProps {
   handleSubmit: (data: { keyword: string, filter: Filter }) => void;
   currFilter?: Filter;
   currKeyword?: string;
+  style?: React.CSSProperties;
 }
 
-export default function SearchHeader({ handleSubmit, currFilter, currKeyword }: SearchHeaderProps) {
+export default function SearchHeader({ handleSubmit, currFilter, currKeyword, style }: SearchHeaderProps) {
   const [filter, setFilter] = useState<Filter>('dt');
   const [keyword, setKeyword] = useState('');
 
@@ -78,7 +78,7 @@ export default function SearchHeader({ handleSubmit, currFilter, currKeyword }: 
   }
 
   return (
-    <Container>
+    <Container style={style}>
       <Absolute>
         <Logo />
       </Absolute>

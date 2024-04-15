@@ -4,6 +4,7 @@ import SearchHeader from './components/common/SearchHeader';
 import { styled } from 'styled-components';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { Filter } from './types';
+import { useEffect } from 'react';
 
 const Container = styled.main`
   display: flex;
@@ -13,9 +14,29 @@ const Container = styled.main`
   padding: 24px;
 `;
 
+const AnimationWrapper = styled.div`
+  transition: transform 0.1s;
+  transform: translate(calc(var(--x)/80), calc(var(--y)/80));
+`;
+
 export default function Home() {
   const searchParams = useSearchParams();
   const { push } = useRouter();
+
+  useEffect(() => {
+    window.addEventListener('mousemove', movingAnimation);
+    return () => {
+      window.removeEventListener('mousemove', movingAnimation);
+    }
+  });
+
+  // transform: translate(calc(var(--x)/45), calc(var(--y)/45));
+  
+  function movingAnimation(e: MouseEvent) {
+    const html = document.documentElement;
+    html.style.setProperty('--x', e.clientX + 'px');
+    html.style.setProperty('--y', e.clientY + 'px');
+  }
 
   function updateQuery({ keyword, filter }: { keyword: string, filter: Filter }) {
     const params = new URLSearchParams(searchParams);
@@ -28,7 +49,9 @@ export default function Home() {
 
   return (
     <Container>
-      <SearchHeader handleSubmit={updateQuery}/>
+      <AnimationWrapper>
+        <SearchHeader handleSubmit={updateQuery}/>
+      </AnimationWrapper>
     </Container>
   );
 }

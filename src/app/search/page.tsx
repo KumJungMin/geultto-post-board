@@ -45,16 +45,15 @@ const EndMessage = styled.p`
   color : #9FA0A1;
 `;
 
-
 export default function Search() {
-  // TODO: 컨텐츠가 높이보다 짧을 때 컨텐츠 추가 렌더링하기
-
   const scrollEl = useRef<HTMLDivElement>(null);
   const { replace } = useRouter();
   const searchParams = useSearchParams();
 
-  const [currKeyword, setCurrKeyword] = useState('');
-  const [currFilter, setCurrFilter] = useState<Filter>('dt');
+  /** useRef는 컴포넌트가 리렌더링되어도 값이 초기화되지 않는다. 대신 값 변경이 즉시 반영된다. */ 
+  const currPostLength = useRef(0);
+  const currKeyword = useRef('');
+  const currFilter = useRef<Filter>('dt');
   const [scrollTopVisible, setScrollTopVisible] = useState(false);
 
   const { totalCount, posts, getPosts, getMorePosts, isLoading } = usePosts();
@@ -62,23 +61,27 @@ export default function Search() {
   useEffect(() => {
     fetchPosts();
   }, []);
+  useEffect(() => {
+    currPostLength.current = posts.length;
+  }, [posts]);
 
   async function fetchPosts() {
-    const params = new URLSearchParams(searchParams);
-    const keyword: string = params.get('keyword') || '';
-    const filter = params.get('filter') as Filter || 'dt';
+    const CONTENT_LIMIT = 18;
+    const keyword: string = searchParams.get('keyword') || '';
+    const filter = searchParams.get('filter') as Filter || 'dt';
 
-    if (keyword) setCurrKeyword(keyword);
-    if (filter) setCurrFilter(filter);
+    if (keyword) currKeyword.current = keyword;
+    if (filter) currFilter.current = filter;
 
-    getPosts({ keyword, filter });
+    const limit = Math.min(Math.ceil(window.innerHeight / 1270) * CONTENT_LIMIT, 50);
+    getPosts({ keyword, filter, limit });
   }
 
   function onSubmit({ keyword, filter }: { keyword: string, filter: Filter }) {
     if (!keyword.length) return;
 
-    setCurrKeyword(keyword.trim());
-    setCurrFilter(filter);
+    currKeyword.current = keyword.trim();
+    currFilter.current = filter;
     getPosts({ keyword, filter });
 
     const params = new URLSearchParams(searchParams);
@@ -88,6 +91,21 @@ export default function Search() {
 
     const newUrl = `/search?${params.toString()}`;
     replace(newUrl);
+  }
+
+
+  useEffect(() => {
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+    }
+  }, []);
+
+  function onResize() {
+    const BLANK_AREA = 40;
+    const isScrollable = scrollEl!.current!.offsetHeight + BLANK_AREA < scrollEl!.current!.scrollHeight;
+    if (!isScrollable) fetchMorePosts();
+    
   }
 
   function toScrollTop() {
@@ -100,10 +118,16 @@ export default function Search() {
 
   let timer: NodeJS.Timeout | null = null;
 
-  function onNext() {
+  function fetchMorePosts() {
+    if (currPostLength.current >= totalCount.current) return;
+
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
-      getMorePosts({ keyword: currKeyword, filter: currFilter });
+      getMorePosts({ 
+        keyword: currKeyword.current, 
+        filter: currFilter.current, 
+        offset: currPostLength.current 
+      });
     }, 100);
   }
 
@@ -112,8 +136,8 @@ export default function Search() {
         <Container ref={scrollEl} id="scrollableDiv" onScroll={onScroll}>
           <InfiniteScroll
             dataLength={posts.length || 0}
-            next={ onNext }
-            hasMore={ posts.length < totalCount }
+            next={ fetchMorePosts }
+            hasMore={ posts.length < totalCount.current }
             loader={<Loading style={{ marginTop: '20px' }} />}
             endMessage={ posts.length ? <EndMessage>더 이상의 컨텐츠가 없습니다</EndMessage> : ''}
             refreshFunction={fetchPosts}
@@ -123,8 +147,8 @@ export default function Search() {
             releaseToRefreshContent={ <FullToRefresh /> }
           >
           <SearchHeader 
-            currKeyword={currKeyword} 
-            currFilter={currFilter} 
+            currKeyword={currKeyword.current} 
+            currFilter={currFilter.current} 
             style={{ paddingTop: '84px'}} 
             handleSubmit={onSubmit}
             onFilterChange={onSubmit}

@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import postApi from '../_api/post';
 import type { Post } from '../types';
 
 export function usePosts() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
+  const totalCount = useRef(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [isMoreLoading, setIsMoreLoading] = useState(false);
 
   async function getPosts({ 
@@ -25,7 +25,7 @@ export function usePosts() {
         limit
       });
       setPosts(data.data);
-      setTotalCount(data.count);
+      totalCount.current = data.count;
     } finally {
       setIsLoading(false);
     }
@@ -35,33 +35,24 @@ export function usePosts() {
     keyword = '', 
     filter = 'dt', 
     isDescending = true, 
-    limit = 18 
+    limit = 18,
+    offset = posts.length
   }) {
     try {
       setIsMoreLoading(true);
       const data = await postApi.fetchPosts({ 
-        offset: posts.length,
+        offset,
         keyword,
         filter,
         isDescending,
         limit
       });
-      const newPosts:Post[] = [...posts, ...data.data];
-      setPosts(newPosts);
-      setTotalCount(data.count);
+      setPosts(prevPosts => [...prevPosts, ...data.data])
+      totalCount.current = data.count;
     } finally {
       setIsMoreLoading(false);
     }
   }
 
-
-
-  return {
-    totalCount,
-    posts,
-    getPosts,
-    isLoading,
-    isMoreLoading,
-    getMorePosts,
-  };
+  return { totalCount, posts, getPosts, getMorePosts, isLoading, isMoreLoading };
 }

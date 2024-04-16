@@ -12,7 +12,7 @@ async function fetchPosts ({
   keyword = '', 
   filter = 'dt', 
   isDescending = true, 
-  limit = 9 
+  limit = 18 
 }: PostParams
 ) {
   const baseUrl = 'https://ttobot.kro.kr/v1/contents';

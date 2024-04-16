@@ -12,7 +12,7 @@ export function usePosts() {
     keyword = '', 
     filter = 'dt', 
     isDescending = true, 
-    limit = 9 
+    limit = 18 
   }) {
     try {
       setIsLoading(true);
@@ -35,7 +35,7 @@ export function usePosts() {
     keyword = '', 
     filter = 'dt', 
     isDescending = true, 
-    limit = 9 
+    limit = 18 
   }) {
     try {
       setIsMoreLoading(true);

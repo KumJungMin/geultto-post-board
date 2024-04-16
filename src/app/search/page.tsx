@@ -59,20 +59,19 @@ export default function Search() {
   const { totalCount, posts, getPosts, getMorePosts, isLoading } = usePosts();
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
-  useEffect(() => {
-    currPostLength.current = posts.length;
-  }, [posts]);
-
-  async function fetchPosts() {
-    const CONTENT_LIMIT = 18;
     const keyword: string = searchParams.get('keyword') || '';
     const filter = searchParams.get('filter') as Filter || 'dt';
 
     if (keyword) currKeyword.current = keyword;
     if (filter) currFilter.current = filter;
+    fetchPosts({ keyword, filter });
+  }, []);
+  useEffect(() => {
+    currPostLength.current = posts.length;
+  }, [posts]);
 
+  async function fetchPosts({keyword, filter}: { keyword: string, filter: Filter }) {
+    const CONTENT_LIMIT = 18;
     const limit = Math.min(Math.ceil(window.innerHeight / 1270) * CONTENT_LIMIT, 50);
     getPosts({ keyword, filter, limit });
   }
@@ -82,7 +81,7 @@ export default function Search() {
 
     currKeyword.current = keyword.trim();
     currFilter.current = filter;
-    getPosts({ keyword, filter });
+    fetchPosts({ keyword, filter });
 
     const params = new URLSearchParams(searchParams);
 

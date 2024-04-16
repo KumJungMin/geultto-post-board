@@ -139,7 +139,7 @@ export default function Search() {
             hasMore={ posts.length < totalCount.current }
             loader={<Loading style={{ marginTop: '20px' }} />}
             endMessage={ posts.length ? <EndMessage>더 이상의 컨텐츠가 없습니다</EndMessage> : ''}
-            refreshFunction={fetchPosts}
+            refreshFunction={() => fetchPosts({ keyword: currKeyword.current, filter: currFilter.current }) }
             pullDownToRefresh
             pullDownToRefreshThreshold={50}
             scrollableTarget="scrollableDiv"

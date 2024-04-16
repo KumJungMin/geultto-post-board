@@ -13,7 +13,6 @@ import Card from "../components/search/Card";
 import Loading from "../components/ui/Loading";
 import SearchHeader from "../components/common/SearchHeader";
 import ScrollToTop from '../components/ui/ScrollToTop';
-import FullToRefresh from '../components/ui/FullToRefresh';
 import NoResult from '../components/search/NoResult';
 
 
@@ -140,10 +139,7 @@ export default function Search() {
             loader={<Loading style={{ marginTop: '20px' }} />}
             endMessage={ posts.length ? <EndMessage>더 이상의 컨텐츠가 없습니다</EndMessage> : ''}
             refreshFunction={() => fetchPosts({ keyword: currKeyword.current, filter: currFilter.current }) }
-            pullDownToRefresh
-            pullDownToRefreshThreshold={50}
             scrollableTarget="scrollableDiv"
-            releaseToRefreshContent={ <FullToRefresh /> }
           >
           <SearchHeader 
             currKeyword={currKeyword.current} 

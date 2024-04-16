@@ -9,6 +9,7 @@ type SearchInputProps = {
   text?: string;
   onChange?: (search: string) => void;
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
+  onKeydown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 const Form = styled.form`
@@ -57,7 +58,16 @@ const Button = styled.button`
 `;
 
 
-export default function SearchInput({ text = '', onChange = () => {}, onSubmit = () => {} }: SearchInputProps) {
+const defaultProps = {
+  text: '',
+  onChange: () => {},
+  onSubmit: () => {},
+  onKeydown: () => {},
+};
+
+export default function SearchInput(props: SearchInputProps) {
+  const { text, onChange, onSubmit, onKeydown } = { ...defaultProps, ...props };
+  
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -80,6 +90,7 @@ export default function SearchInput({ text = '', onChange = () => {}, onSubmit =
         type="text"
         value={search}
         onChange={handleSearch}
+        onKeyDown={onKeydown}
         placeholder="‘전체보기’를 입력하면 전체 글을 불러옵니다."
       />
       <Button>

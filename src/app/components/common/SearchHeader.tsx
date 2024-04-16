@@ -50,12 +50,15 @@ const SelectBox = styled.input<{$isSelect: boolean}>`
 
 interface SearchHeaderProps {
   handleSubmit: (data: { keyword: string, filter: Filter }) => void;
+  onFilterChange: (data: { keyword: string, filter: Filter }) => void;
+
   currFilter?: Filter;
   currKeyword?: string;
   style?: React.CSSProperties;
 }
 
-export default function SearchHeader({ handleSubmit, currFilter, currKeyword, style }: SearchHeaderProps) {
+export default function SearchHeader(props: SearchHeaderProps) {
+  const { handleSubmit, currFilter, currKeyword, style, onFilterChange } = props;
   const [filter, setFilter] = useState<Filter>('dt');
   const [keyword, setKeyword] = useState('');
 
@@ -66,7 +69,9 @@ export default function SearchHeader({ handleSubmit, currFilter, currKeyword, st
   }, [currFilter, currKeyword]);
 
   function changeFilter(e: React.ChangeEvent<HTMLInputElement>) {
-    setFilter(e.target.value as Filter);
+    const filter = e.target.value as Filter;
+    setFilter(filter);
+    onFilterChange({ keyword, filter });
   }
 
   function isSelect(text: Filter) {
@@ -77,12 +82,21 @@ export default function SearchHeader({ handleSubmit, currFilter, currKeyword, st
     handleSubmit({ keyword, filter });
   }
 
+  function handleKeywordChange(keyword: string) {
+    setKeyword(keyword.trim());
+  }
+
+  function handleKeydown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === ' ' && !keyword.length)  e.preventDefault();
+    else if (e.key === 'Escape') setKeyword('');
+  }
+
   return (
     <Container style={style}>
       <Absolute>
         <Logo />
       </Absolute>
-      <SearchInput text={keyword} onChange={setKeyword} onSubmit={onSubmit}/>
+      <SearchInput text={keyword} onChange={handleKeywordChange} onSubmit={onSubmit} onKeydown={handleKeydown}/>
       <SelectBoxWrapper>
         <div>
           <SelectBox 

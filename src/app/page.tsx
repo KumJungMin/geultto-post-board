@@ -37,9 +37,11 @@ export default function Home() {
   }
 
   function updateQuery({ keyword, filter }: { keyword: string, filter: Filter }) {
+    if (!keyword.length) return;
+
     const params = new URLSearchParams(searchParams);
 
-    params.set('keyword', keyword);
+    params.set('keyword', keyword.trim());
     params.set('filter', filter);
     const newUrl = `/search?${params.toString()}`;
     push(newUrl);
@@ -48,7 +50,7 @@ export default function Home() {
   return (
     <Container>
       <AnimationWrapper>
-        <SearchHeader handleSubmit={updateQuery}/>
+        <SearchHeader handleSubmit={updateQuery} onFilterChange={updateQuery} />
       </AnimationWrapper>
     </Container>
   );

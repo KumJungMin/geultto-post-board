@@ -75,7 +75,9 @@ export default function Search() {
   }
 
   function onSubmit({ keyword, filter }: { keyword: string, filter: Filter }) {
-    setCurrKeyword(keyword);
+    if (!keyword.length) return;
+
+    setCurrKeyword(keyword.trim());
     setCurrFilter(filter);
     getPosts({ keyword, filter });
 
@@ -125,6 +127,7 @@ export default function Search() {
             currFilter={currFilter} 
             style={{ paddingTop: '84px'}} 
             handleSubmit={onSubmit}
+            onFilterChange={onSubmit}
           />
             {
               isLoading ? <Loading fullWindow /> :

@@ -20,14 +20,15 @@ const GoogleAnalytics = ({ trackingId }: GoogleAnalyticsProps) => {
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    const params = searchParams.toString()
-    const url = `${pathname}?${decodeURI(params)}`
+    const strParams = searchParams.toString() || ''
+    const decodedParams = strParams ? decodeURI(strParams) : ''
+    const url = decodedParams ? `${pathname}?${decodedParams}` : pathname
     currentPath.current = url
+    
     if (window.gtag) {
       window.gtag('config', trackingId, {
       page_path: currentPath.current,
       });
-      console.log('gtag', currentPath.current)
     }
 
   }, [pathname, searchParams, trackingId]);

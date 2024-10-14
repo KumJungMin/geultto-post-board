@@ -2,7 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import Script from 'next/script';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
+
+declare global {
+  interface Window {
+    gtag?: any;
+  }
+}
 
 interface GoogleAnalyticsProps {
   trackingId: string;

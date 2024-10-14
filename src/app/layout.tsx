@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import StyledComponentsRegistry from './lib/registry'
 import { Suspense } from 'react';
+
+import StyledComponentsRegistry from './lib/registry'
+import GoogleAnalytics from './components/common/GoogleAnalytics';
 
 import "./globals.css";
 import { Noto_Sans_KR, Noto_Sans } from 'next/font/google';
@@ -25,10 +27,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const trackingId = process.env.NEXT_PUBLIC_GA_TRACKING_ID || '';
+  const startGA = process.env.NEXT_PUBLIC_ENV !== 'development' && trackingId
+  
   return (
     <html lang="kr">
       <body className={`${notoKR} ${notoSans}`}>
         <Suspense>
+          {startGA && <GoogleAnalytics trackingId={trackingId} />}
           <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
         </Suspense>
       </body>

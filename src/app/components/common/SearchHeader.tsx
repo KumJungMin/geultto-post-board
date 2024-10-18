@@ -1,16 +1,22 @@
 'use client';
 import { useEffect, useState } from 'react';
-import type { Filter } from '../../types'
+import { styled } from 'styled-components';
+
+import type { Filter, JobCategory } from '../../types'
 
 import Logo from "../ui/Logo";
 import SearchInput from './SearchInput';
-import { styled } from 'styled-components';
+import Dropdown from './Dropdown';
 
 const Container = styled.div`
   position: relative;
   display: flex;
   justify-content: center;
   margin: 0 auto;
+  margin-top: 100px;
+  @media (max-width: 534px) {
+    margin-top: 80px;
+  }
 `;
 
 const Absolute = styled.div`
@@ -20,16 +26,21 @@ const Absolute = styled.div`
 
 const SelectBoxWrapper = styled.div`
   position: absolute;
+  width: 342px;
   left: 50%;
   bottom: 0;
   display: flex;
   gap: 8px;
   transform: translateX(180px);
   bottom: 0;
-  @media (max-width: 534px) {
-    bottom: -38px;
-    transform: translateX(74px);
+  @media (max-width: 734px) {
+    justify-content: space-between;
+    transform: translate(-50%, 48px);
   }
+  @media (max-width: 534px) {
+    width: 300px;
+  }
+    
 `;
 
 const SelectBox = styled.input<{$isSelect: boolean}>`
@@ -49,9 +60,11 @@ const SelectBox = styled.input<{$isSelect: boolean}>`
 `;
 
 interface SearchHeaderProps {
-  handleSubmit: (data: { keyword: string, filter: Filter }) => void;
-  onFilterChange: (data: { keyword: string, filter: Filter }) => void;
+  handleSubmit: (data: { keyword: string, filter: Filter, selectedItem: JobCategory }) => void;
+  onFilterChange?: (data: { keyword: string, filter: Filter, selectedItem: JobCategory }) => void;
 
+  dropdownItems?: string[];
+  selectedDropdownItem?: string;
   hasFilter?: boolean;
   currFilter?: Filter;
   currKeyword?: string;
@@ -59,9 +72,19 @@ interface SearchHeaderProps {
 }
 
 export default function SearchHeader(props: SearchHeaderProps) {
-  const { handleSubmit, currFilter, currKeyword, style, onFilterChange, hasFilter = false } = props;
+  const { 
+    dropdownItems = [],
+    selectedDropdownItem = '',
+    currFilter, 
+    currKeyword, 
+    style, 
+    hasFilter = false,
+    handleSubmit, 
+    onFilterChange = () => {}
+  } = props;
   const [filter, setFilter] = useState<Filter>('dt');
   const [keyword, setKeyword] = useState('');
+  const [selectedItem, setSelectedItem] = useState(selectedDropdownItem);
 
 
   useEffect(() => {
@@ -69,10 +92,20 @@ export default function SearchHeader(props: SearchHeaderProps) {
     if (currKeyword) setKeyword(currKeyword);
   }, [currFilter, currKeyword]);
 
+  useEffect(() => {
+    if (selectedDropdownItem) setSelectedItem(selectedDropdownItem);
+  }, [selectedDropdownItem]);
+
   function changeFilter(e: React.ChangeEvent<HTMLInputElement>) {
     const filter = e.target.value as Filter;
     setFilter(filter);
-    onFilterChange({ keyword, filter });
+    onFilterChange({ keyword, filter, selectedItem });
+  }
+
+  function updateSelectedDropdownItem(item: JobCategory) {
+    setSelectedItem(item);
+
+    onFilterChange({ keyword, filter, selectedItem: item });
   }
 
   function isSelect(text: Filter) {
@@ -80,7 +113,7 @@ export default function SearchHeader(props: SearchHeaderProps) {
   }
 
   function onSubmit() {
-    handleSubmit({ keyword, filter });
+    handleSubmit({ keyword, filter, selectedItem });
   }
 
   function handleKeywordChange(keyword: string) {
@@ -97,32 +130,40 @@ export default function SearchHeader(props: SearchHeaderProps) {
       <Absolute>
         <Logo />
       </Absolute>
-      <SearchInput text={keyword} onChange={handleKeywordChange} onSubmit={onSubmit} onKeydown={handleKeydown}/>
+        <SearchInput text={keyword} onChange={handleKeywordChange} onSubmit={onSubmit} onKeydown={handleKeydown}/>
       {
         hasFilter && (
           <SelectBoxWrapper>
-            <div>
-              <SelectBox 
-                type='radio' 
-                id='dt' 
-                name="filter" 
-                value='dt' 
-                $isSelect={isSelect('dt')} 
-                onChange={changeFilter} 
-              />
-              <label htmlFor='dt'>날짜</label>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <div>
+                <SelectBox 
+                  type='radio' 
+                  id='dt' 
+                  name="filter" 
+                  value='dt' 
+                  $isSelect={isSelect('dt')} 
+                  onChange={changeFilter} 
+                />
+                <label htmlFor='dt'>날짜</label>
+              </div>
+              <div>
+                <SelectBox 
+                  type='radio' 
+                  id='relevance' 
+                  name="filter" 
+                  value='relevance' 
+                  $isSelect={isSelect('relevance')} 
+                  onChange={changeFilter}
+                />
+                <label htmlFor='relevance'>관련순</label>
+              </div>
             </div>
-            <div>
-              <SelectBox 
-                type='radio' 
-                id='relevance' 
-                name="filter" 
-                value='relevance' 
-                $isSelect={isSelect('relevance')} 
-                onChange={changeFilter}
+            <Dropdown 
+              items={dropdownItems} 
+              selected={selectedItem} 
+              defaultText='직군선택' 
+              onSelect={updateSelectedDropdownItem}
               />
-              <label htmlFor='relevance'>관련순</label>
-            </div>
           </SelectBoxWrapper>
         )
       }

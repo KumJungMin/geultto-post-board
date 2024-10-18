@@ -6,8 +6,9 @@ import { styled } from 'styled-components';
 import { useSearchParams } from 'next/navigation';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import type { Filter } from '../types';
+import type { Filter, JobCategory } from '../types';
 import { usePosts } from '../composables/use-posts';
+import { jobCategories } from '../constants';
 
 import Card from "../components/search/Card";
 import Loading from "../components/ui/Loading";
@@ -22,11 +23,7 @@ const Container = styled.main`
   width: 100%;
   height: 100%;
   align-items: center;
-  padding-top: 100px;
-  overflow-y: auto;
-  @media (max-width: 534px) {
-    padding-top: 80px;
-  }
+  overflow-y: hidden;
 `;
 
 const Grid = styled.div`
@@ -37,6 +34,9 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
+  @media (max-width: 734px) {
+    margin-top: 98px;
+  }
 `;
 
 const EndMessage = styled.p`
@@ -53,6 +53,7 @@ export default function Search() {
   const currPostLength = useRef(0);
   const currKeyword = useRef('');
   const currFilter = useRef<Filter>('dt');
+  const currJobCategory = useRef<JobCategory>('');
   const [scrollTopVisible, setScrollTopVisible] = useState(false);
 
   const { totalCount, posts, getPosts, getMorePosts, isLoading } = usePosts();
@@ -60,32 +61,38 @@ export default function Search() {
   useEffect(() => {
     const keyword: string = searchParams.get('keyword') || '';
     const filter = searchParams.get('filter') as Filter || 'dt';
+    const jobCategory = searchParams.get('job_category') as JobCategory || '';
 
     if (keyword) currKeyword.current = keyword;
     if (filter) currFilter.current = filter;
-    fetchPosts({ keyword, filter });
+    if (jobCategory) currJobCategory.current = jobCategory;
+
+    fetchPosts({ keyword, filter, jobCategory });
   }, []);
   useEffect(() => {
     currPostLength.current = posts.length;
   }, [posts]);
 
-  async function fetchPosts({keyword, filter}: { keyword: string, filter: Filter }) {
+  async function fetchPosts({keyword, filter, jobCategory }: { keyword: string, filter: Filter, jobCategory?: JobCategory }) {
     const CONTENT_LIMIT = 18;
     const limit = Math.min(Math.ceil(window.innerHeight / 1270) * CONTENT_LIMIT, 50);
-    getPosts({ keyword, filter, limit });
+    getPosts({ keyword, filter, jobCategory, limit });
   }
 
-  function onSubmit({ keyword, filter }: { keyword: string, filter: Filter }) {
+  function onSubmit({ keyword, filter, selectedItem }: { keyword: string, filter: Filter, selectedItem: JobCategory }) {
     if (!keyword.length) return;
 
     currKeyword.current = keyword.trim();
     currFilter.current = filter;
-    fetchPosts({ keyword, filter });
+    currJobCategory.current = selectedItem;
+
+    fetchPosts({ keyword, filter, jobCategory: selectedItem });
 
     const params = new URLSearchParams(searchParams);
 
     params.set('keyword', keyword);
     params.set('filter', filter);
+    if (selectedItem) params.set('job_category', selectedItem);
 
     const newUrl = `/search?${params.toString()}`;
     replace(newUrl);
@@ -101,17 +108,21 @@ export default function Search() {
 
   function onResize() {
     const BLANK_AREA = 40;
-    const isScrollable = scrollEl!.current!.offsetHeight + BLANK_AREA < scrollEl!.current!.scrollHeight;
+    const scrollTarget = document.querySelector('.infinite-scroll-component');
+    const isScrollable = scrollTarget?.offsetHeight + BLANK_AREA < scrollTarget?.scrollHeight;
+    
     if (!isScrollable) fetchMorePosts();
     
   }
 
   function toScrollTop() {
-    scrollEl!.current!.scrollTo({ top: 0, behavior: 'smooth' });
+    const scrollTarget = document.querySelector('.infinite-scroll-component');
+
+    scrollTarget?.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function onScroll(e: React.UIEvent<HTMLDivElement>){
-    setScrollTopVisible(e.currentTarget.scrollTop > 100);
+  function onScroll(e: React.UIEvent<HTMLDivElement>) {
+    setScrollTopVisible(e.target.scrollTop > 100);
   }
 
   let timer: NodeJS.Timeout | null = null;
@@ -124,26 +135,30 @@ export default function Search() {
       getMorePosts({ 
         keyword: currKeyword.current, 
         filter: currFilter.current, 
-        offset: currPostLength.current 
+        offset: currPostLength.current,
+        jobCategory: currJobCategory.current
       });
     }, 100);
   }
 
   return (
     <>
-        <Container ref={scrollEl} id="scrollableDiv" onScroll={onScroll}>
+        <Container>
           <InfiniteScroll
             dataLength={posts.length || 0}
             next={ fetchMorePosts }
+            height={'100vh'}
             hasMore={ posts.length < totalCount.current }
+            onScroll={onScroll}
             loader={<Loading style={{ marginTop: '20px' }} />}
             endMessage={ posts.length ? <EndMessage>더 이상의 컨텐츠가 없습니다</EndMessage> : ''}
-            refreshFunction={() => fetchPosts({ keyword: currKeyword.current, filter: currFilter.current }) }
-            scrollableTarget="scrollableDiv"
+            refreshFunction={() => fetchPosts({ keyword: currKeyword.current, filter: currFilter.current, jobCategory: currJobCategory.current })}
           >
           <SearchHeader 
             currKeyword={currKeyword.current} 
             currFilter={currFilter.current} 
+            dropdownItems={jobCategories}
+            selectedDropdownItem={currJobCategory.current}
             style={{ paddingTop: '84px'}} 
             hasFilter
             handleSubmit={onSubmit}

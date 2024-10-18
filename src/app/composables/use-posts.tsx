@@ -11,6 +11,7 @@ export function usePosts() {
   async function getPosts({ 
     keyword = '', 
     filter = 'dt', 
+    jobCategory = '',
     isDescending = true, 
     limit = 18 
   }) {
@@ -22,7 +23,8 @@ export function usePosts() {
         keyword, 
         filter, 
         isDescending, 
-        limit
+        limit,
+        job_category: jobCategory
       });
       setPosts(data.data);
       totalCount.current = data.count;
@@ -36,7 +38,8 @@ export function usePosts() {
     filter = 'dt', 
     isDescending = true, 
     limit = 18,
-    offset = posts.length
+    offset = posts.length,
+    jobCategory = '',
   }) {
     try {
       setIsMoreLoading(true);
@@ -45,7 +48,8 @@ export function usePosts() {
         keyword,
         filter,
         isDescending,
-        limit
+        limit,
+        job_category: jobCategory
       });
       setPosts(prevPosts => [...prevPosts, ...data.data])
       totalCount.current = data.count;

@@ -29,6 +29,13 @@ body {
   .infinite-scroll-component__outerdiv {
     width: 100%;
   }
+  .infinite-scroll-component {
+    -ms-overflow-style: none; 
+    scrollbar-width: none;
+}
+  .infinite-scroll-component::-webkit-scrollbar {
+    display: none; 
+  }
 }
 
 main {

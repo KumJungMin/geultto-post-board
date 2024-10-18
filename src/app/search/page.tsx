@@ -88,7 +88,7 @@ export default function Search() {
 
     fetchPosts({ keyword, filter, jobCategory: selectedItem });
 
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams as any);
 
     params.set('keyword', keyword);
     params.set('filter', filter);
@@ -108,7 +108,7 @@ export default function Search() {
 
   function onResize() {
     const BLANK_AREA = 40;
-    const scrollTarget = document.querySelector('.infinite-scroll-component');
+    const scrollTarget = document.querySelector('.infinite-scroll-component') as HTMLElement;
     const isScrollable = scrollTarget?.offsetHeight + BLANK_AREA < scrollTarget?.scrollHeight;
     
     if (!isScrollable) fetchMorePosts();
@@ -121,8 +121,9 @@ export default function Search() {
     scrollTarget?.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function onScroll(e: React.UIEvent<HTMLDivElement>) {
-    setScrollTopVisible(e.target.scrollTop > 100);
+  function onScroll(e: MouseEvent) {
+    const scrollTarget = e.target as HTMLElement;
+    setScrollTopVisible(scrollTarget.scrollTop > 100);
   }
 
   let timer: NodeJS.Timeout | null = null;

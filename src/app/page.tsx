@@ -3,7 +3,6 @@
 import SearchHeader from './components/common/SearchHeader';
 import { styled } from 'styled-components';
 import { useRouter, useSearchParams } from 'next/navigation';
-import type { Filter } from './types';
 import { useEffect } from 'react';
 
 const Container = styled.main`
@@ -36,13 +35,12 @@ export default function Home() {
     html.style.setProperty('--y', e.clientY + 'px');
   }
 
-  function updateQuery({ keyword, filter }: { keyword: string, filter: Filter }) {
+  function updateQuery({ keyword }: { keyword: string }) {
     if (!keyword.length) return;
 
     const params = new URLSearchParams(searchParams);
 
     params.set('keyword', keyword.trim());
-    params.set('filter', filter);
     const newUrl = `/search?${params.toString()}`;
     push(newUrl);
   }
@@ -50,7 +48,7 @@ export default function Home() {
   return (
     <Container>
       <AnimationWrapper>
-        <SearchHeader handleSubmit={updateQuery} onFilterChange={updateQuery} />
+        <SearchHeader handleSubmit={updateQuery} />
       </AnimationWrapper>
     </Container>
   );

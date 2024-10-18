@@ -52,13 +52,14 @@ interface SearchHeaderProps {
   handleSubmit: (data: { keyword: string, filter: Filter }) => void;
   onFilterChange: (data: { keyword: string, filter: Filter }) => void;
 
+  hasFilter?: boolean;
   currFilter?: Filter;
   currKeyword?: string;
   style?: React.CSSProperties;
 }
 
 export default function SearchHeader(props: SearchHeaderProps) {
-  const { handleSubmit, currFilter, currKeyword, style, onFilterChange } = props;
+  const { handleSubmit, currFilter, currKeyword, style, onFilterChange, hasFilter = false } = props;
   const [filter, setFilter] = useState<Filter>('dt');
   const [keyword, setKeyword] = useState('');
 
@@ -97,30 +98,35 @@ export default function SearchHeader(props: SearchHeaderProps) {
         <Logo />
       </Absolute>
       <SearchInput text={keyword} onChange={handleKeywordChange} onSubmit={onSubmit} onKeydown={handleKeydown}/>
-      <SelectBoxWrapper>
-        <div>
-          <SelectBox 
-            type='radio' 
-            id='dt' 
-            name="filter" 
-            value='dt' 
-            $isSelect={isSelect('dt')} 
-            onChange={changeFilter} 
-          />
-          <label htmlFor='dt'>날짜</label>
-        </div>
-        <div>
-          <SelectBox 
-            type='radio' 
-            id='relevance' 
-            name="filter" 
-            value='relevance' 
-            $isSelect={isSelect('relevance')} 
-            onChange={changeFilter}
-          />
-          <label htmlFor='relevance'>관련순</label>
-        </div>
-      </SelectBoxWrapper>
+      {
+        hasFilter && (
+          <SelectBoxWrapper>
+            <div>
+              <SelectBox 
+                type='radio' 
+                id='dt' 
+                name="filter" 
+                value='dt' 
+                $isSelect={isSelect('dt')} 
+                onChange={changeFilter} 
+              />
+              <label htmlFor='dt'>날짜</label>
+            </div>
+            <div>
+              <SelectBox 
+                type='radio' 
+                id='relevance' 
+                name="filter" 
+                value='relevance' 
+                $isSelect={isSelect('relevance')} 
+                onChange={changeFilter}
+              />
+              <label htmlFor='relevance'>관련순</label>
+            </div>
+          </SelectBoxWrapper>
+        )
+      }
+      
     </Container>
   );
 }

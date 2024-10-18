@@ -145,6 +145,7 @@ export default function Search() {
             currKeyword={currKeyword.current} 
             currFilter={currFilter.current} 
             style={{ paddingTop: '84px'}} 
+            hasFilter
             handleSubmit={onSubmit}
             onFilterChange={onSubmit}
           />
